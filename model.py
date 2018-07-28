@@ -65,7 +65,27 @@ class CreditCards(db.Model):
 
 
 
+class Circlets (db.Model):
+    circlet_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False)
+    activated_at = db.Column(db.DateTime, nullable=False)
+    description = db.Column(db.String(50), nullable=True)
+    total_amount = db.Column(db.Integer, nullable=False)
+    amount_paid = db.Column(db.Integer, nullable=False)
+    payment_frequency = db.Column(db.Integer, nullable=False)  # Number of days
+    payment_per_interval = db.Column(db.Integer, nullable=False)
+    is_complete = db.Column(db.Boolean, default=False)
 
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+        return "<Circlet created_at={} description={} total_amount={} amount_paid={}, payment_frequency={}, payment_per_interval={}>".format(
+                                                                        self.created_at,
+                                                                        self.description,
+                                                                        self.total_amount,
+                                                                        self.amount_paid,
+                                                                        self.payment_frequency,
+                                                                        self.payment_per_interval
+                                                                        )
 
 
 
