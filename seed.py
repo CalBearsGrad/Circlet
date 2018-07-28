@@ -1,6 +1,6 @@
 import bcrypt
 
-from model import User
+from model import User, CreditCards
 
 
 from model import connect_to_db, db
@@ -18,7 +18,14 @@ def sample_user():
     db.session.add(alyssa)
     db.session.commit()
 
+def sample_cc():
+    """ Add sample cc to DB """
 
+    print "Sample CC"
+
+    cc = CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123")
+    db.session.add(cc)
+    db.session.commit()
 
 
 if __name__ == "__main__":
@@ -29,3 +36,5 @@ if __name__ == "__main__":
 
     # Import different types of data
     sample_user()
+    sample_cc()
+

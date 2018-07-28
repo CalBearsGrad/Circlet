@@ -32,6 +32,8 @@ class User(db.Model):
     # Define a relationship
 
 
+
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -41,7 +43,26 @@ class User(db.Model):
                                                                         self.last_name,
                                                                         self.email
                                                                         )
-       
+
+
+
+class CreditCards(db.Model):
+    cc_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    number = db.Column(db.String(30), nullable=False)
+    exp_month = db.Column(db.String(2), nullable=False)
+    exp_year = db.Column(db.String(2), nullable=False)
+    cvc = db.Column(db.String(5), nullable=False)
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<CreditCards cc={} number={} exp_month={} exp_year={}>".format(
+                                                                        self.cc_id,
+                                                                        self.number,
+                                                                        self.exp_month,
+                                                                        self.exp_year
+                                                                        )
+
 
 
 
@@ -65,7 +86,7 @@ if __name__ == "__main__":
 
     # As a convenience, if we run this module interactively, it will leave
     # you in a state of being able to work with the database directly.
-    
+
     from server import app
     connect_to_db(app)
     print "Connected to DB."
