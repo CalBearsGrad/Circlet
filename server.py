@@ -30,6 +30,26 @@ def index():
     return render_template('homepage.html')
 
 
+@app.route('/register')
+def register():
+    """ Homepage """
+    email = request.form.get('email')
+    password = request.form.get('password')
+    user = create_user(email, password)
+    return render_template('profile.html', user=user)
+
+
+@app.route('/profile/<id>')
+def profile(id):
+    return render_template('profile.html', user=get_user(id))
+
+def create_user(email, password):
+    return "1"
+
+def get_user(id):
+    return None
+
+
 #########################################################################
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
