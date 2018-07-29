@@ -63,7 +63,7 @@ def get_user(id):
 
 @app.route('/sendemail')
 def send():
-    sendalert("""
+    sendemail("""
         <html>
             <head>
             </head>
