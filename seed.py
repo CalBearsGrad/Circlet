@@ -30,6 +30,8 @@ def sample_cc():
 
     print "Sample CC"
 
+    cc = CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123")
+    db.session.add(cc)
     cards = [
         CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
         CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
