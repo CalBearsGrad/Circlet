@@ -152,10 +152,13 @@ def verify_registration():
 def profile(id):
     """Render Circlet status and current Circlet attribute"""
 
-    user = User.query.filter_by(email=email).first()
-    first_name = user.first_name.first()
+    # user = User.query.filter_by(email=email).first()
+    # first_name = user.first_name.first()
+    user = get_user(id)
+    print user
 
-    return render_template('profile.html', user=get_user(id), first_name=first_name(id))
+
+    return render_template('profile.html', user=user)
 
 @app.route('/log_in')
 def log_in():
