@@ -153,20 +153,32 @@ def insert_user_circlets(circlet_id, user_ids):
     db.session.commit()
 
 def get_users_for_circlet(circlet_id):
-    circlets = db.session.query(UserCirclets).filter_by(circlet_id=circlet_id).all()
+    circlets = get_user_circlets(circlet_id)
     users = []
     for circlet in circlets:
         users.append(circlet.user)
     return users
 
+def get_user_circlets(circlet_id):
+    return db.session.query(UserCirclets).filter_by(circlet_id=circlet_id).all()
+
 def set_user_circlet_info(user_id, circlet_id, monthly_payment):
     print("userId", user_id, "cirlcist", circlet_id)
-    circlet = db.session.query(UserCirclets).filter_by(circlet_id=circlet_id, user_id = user_id).one()
+    circlet = get_user_circlet(user_id, circlet_id)
     if not circlet:
         raise Exception("Missing circlet")
     circlet.monthly_payment = monthly_payment
     db.session.add(circlet)
     db.session.commit()
+
+def set_confirmed(user_id, circlet_id):
+    uc = get_user_circlet(user_id, circlet_id)
+    uc.is_confirmed = True
+    db.session.add(uc)
+    db.session.commit()
+
+def get_user_circlet(user_id, circlet_id):
+    return db.session.query(UserCirclets).filter_by(circlet_id=circlet_id, user_id = user_id).one()
 
 
 
