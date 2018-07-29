@@ -27,10 +27,11 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, nullable=False)
     reliability = db.Column(db.Integer, nullable=False)
     ranking = db.Column(db.Integer, nullable=False)
-    credit_card_id= db.Column(db.Integer, nullable=False, unique=True)
+    credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.credit_card_id'), nullable=False, unique=True)
 
     # Define a relationship
-
+    credit_card = db.relationship("CreditCards", backref=db.backref("user"))
+    circlet = db.relationship("Circlets", secondary="users_circlet", backref=db.backref("user"))
 
 
 
@@ -47,7 +48,10 @@ class User(db.Model):
 
 
 class CreditCards(db.Model):
-    cc_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+
+    __tablename__ = "credit_cards"
+
+    credit_card_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     number = db.Column(db.String(30), nullable=False)
     exp_month = db.Column(db.String(2), nullable=False)
     exp_year = db.Column(db.String(2), nullable=False)
@@ -66,6 +70,9 @@ class CreditCards(db.Model):
 
 
 class Circlets (db.Model):
+
+    __tablename__ = "circlets"
+
     circlet_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     created_at = db.Column(db.DateTime, nullable=False)
     activated_at = db.Column(db.DateTime, nullable=False)
@@ -87,7 +94,23 @@ class Circlets (db.Model):
                                                                         self.payment_per_interval
                                                                         )
 
+class UserCirclets (db.Model):
 
+    __tablename__ = "users_circlet"
+
+    uc_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    circlet_id = db.Column(db.Integer, db.ForeignKey('circlets.circlet_id'), nullable=False)
+    is_confirmed = is_complete = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+        return "<UserCirclets uc_id{=} user_id={} circlet_id={} is_confirmed{}>".format(
+                                                                        self.uc_id,
+                                                                        self.user_id,
+                                                                        self.circlet_id,
+                                                                        self.is_confirmed
+                                                                        )
 
 ##############################################################################
 # Helper functions

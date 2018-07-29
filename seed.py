@@ -1,6 +1,6 @@
 import bcrypt
 
-from model import User, CreditCards, Circlets
+from model import User, CreditCards, Circlets, UserCirclets
 
 
 from model import connect_to_db, db
@@ -29,12 +29,21 @@ def sample_cc():
 
 
 def sample_circlet():
-    """ Add sample user to DB """
+    """ Add sample circlet to DB """
 
     print "Sample Circlet"
 
     circlet = Circlets(created_at='2018-07-29', activated_at='2018-07-29', description="Thing I want to buy", total_amount=100, amount_paid=0, payment_frequency=7, payment_per_interval=10)
     db.session.add(circlet)
+    db.session.commit()
+
+def sample_uc():
+    """ Add sample user-circlet to DB """
+
+    print "Sample UC"
+
+    uc = UserCirclets(user_id=1, circlet_id=1)
+    db.session.add(uc)
     db.session.commit()
 
 
@@ -48,4 +57,5 @@ if __name__ == "__main__":
     sample_user()
     sample_cc()
     sample_circlet()
+    sample_uc()
 
