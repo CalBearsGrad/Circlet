@@ -102,6 +102,38 @@ def verify_registration():
         flash("You have found a website loophole... Please try again later.")
         return redirect("/")
 
+@app.route('/check-user', methods=["POST", "GET"])
+def check_user():
+    """allow a new user to register email address and password
+    """
+
+    print "I am in check-user route"
+    if ("email" in session) == None:
+            print "didn't get email"
+
+    email = request.form.get("email")
+
+    password = request.form.get("password")
+
+    print email
+    print password
+
+    reference_email = Givr.query.filter_by(email=email).first()
+
+    # user_email = reference_email.email
+
+    if reference_email:
+        print
+        print "Email address matches GivrR in database"
+        print
+        session.clear()
+        session['email'] = email
+        session['password'] = password
+
+        return redirect("/log_in")
+    else:
+        return redirect("/preferences-small-giv")
+
 @app.route('/profile/<id>')
 def profile(id):
     """Render Circlet status and current Circlet attribute"""
@@ -110,6 +142,12 @@ def profile(id):
     first_name = user.first_name.first()
 
     return render_template('profile.html', user=get_user(id), first_name=first_name(id))
+
+@app.route('/log_in')
+def log_in():
+    """Allows user to log in
+    """
+    return render_template('log_in.html')
 
 @app.route('/settings/<id>')
 def setting(id):
