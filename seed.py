@@ -54,8 +54,8 @@ if __name__ == "__main__":
     db.create_all()
 
     # Import different types of data
-    sample_user()
     sample_cc()
+    sample_user()
     sample_circlet()
     sample_uc()
 
