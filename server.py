@@ -114,37 +114,39 @@ def verify_registration():
         flash("You have found a website loophole... Please try again later.")
         return redirect("/")
 
-@app.route('/check-user', methods=["POST", "GET"])
-def check_user():
-    """allow a new user to register email address and password
-    """
 
-    print "I am in check-user route"
-    if ("email" in session) == None:
-            print "didn't get email"
+## Route not uisng:
+# @app.route('/check-user', methods=["POST", "GET"])
+# def check_user():
+#     """allow a new user to register email address and password
+#     """
 
-    email = request.form.get("email")
+#     print "I am in check-user route"
+#     if ("email" in session) == None:
+#             print "didn't get email"
 
-    password = request.form.get("password")
+#     email = request.form.get("email")
 
-    print email
-    print password
+#     password = request.form.get("password")
 
-    reference_email = Givr.query.filter_by(email=email).first()
+#     print email
+#     print password
 
-    # user_email = reference_email.email
+#     reference_email = Givr.query.filter_by(email=email).first()
 
-    if reference_email:
-        print
-        print "Email address matches GivrR in database"
-        print
-        session.clear()
-        session['email'] = email
-        session['password'] = password
+#     # user_email = reference_email.email
 
-        return redirect("/log_in")
-    else:
-        return redirect("/preferences-small-giv")
+#     if reference_email:
+#         print
+#         print "Email address matches GivrR in database"
+#         print
+#         session.clear()
+#         session['email'] = email
+#         session['password'] = password
+
+#         return redirect("/log_in")
+#     else:
+#         return redirect("/preferences-small-giv")
 
 @app.route('/profile/<id>')
 def profile(id):
