@@ -19,7 +19,9 @@ def sample_user():
         User(first_name="Em", last_name="E", email="e@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=6),
         User(first_name="Fa", last_name="F", email="f@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=7),
         User(first_name="Gu", last_name="G", email="g@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=8),
-        User(first_name="Dave", last_name="Galbraith", email="davidvgalbraith@gmail.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=9)
+        User(first_name="Dave", last_name="Galbraith", email="davidvgalbraith@gmail.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=9),
+        User(first_name="Marijane", last_name="Castillo", email="MarijaneCastillo@gmail.com", password=hashed_pw, created_at='2018-07-29', reliability=10, ranking=10, credit_card_id=10)
+
     ]
 
     for user in users:
@@ -43,6 +45,7 @@ def sample_cc():
         CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
         CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
         CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123")
     ]
     for cc in cards:
         db.session.add(cc)
