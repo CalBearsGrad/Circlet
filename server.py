@@ -8,7 +8,12 @@ import os
 from jinja2 import StrictUndefined
 
 from flask import (Flask, render_template, redirect, request, flash, session, jsonify)
+from model import User, CreditCards, Circlets, UserCirclets
+
 from flask_debugtoolbar import DebugToolbarExtension
+
+import bcrypt
+
 import sendgrid
 from sendgrid.helpers.mail import *
 
@@ -44,9 +49,57 @@ def register():
     return render_template('profile.html', user=user)
 
 
+@app.route("/verify-registration", methods=['POST'])
+def verify_registration():
+    """ Verify registration form """
+
+    print "User Registration"
+
+    first_name = request.form.get("first_name")
+    last_name = request.form.get("last_name")
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    cc_number = request.form.get("cc-number")
+    exp_date = request.form.get("cc-expiration")
+    cc_cvc = request.form.get("cc-cvc")
+
+
+    # Hash the password because security is important
+    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+    print "First:", first_name
+    print "Last:", last_name
+    print "Email:", email
+    print "PW:", hashed_pw
+
+    # Look for the email in the DB
+    existing_user = User.query.filter(User.email == email).all()
+
+    if len(existing_user) == 0:
+        print "New User"
+        user = User(first_name=first_name, last_name=last_name, email=email, password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=1)
+        cc = CreditCards(number=cc_number, date=exp_date, cvc=cc_cvc)
+        db.session.add(user)
+        db.session.add(credit_card)
+        db.session.commit()
+        flash("You are now registered!")
+        return redirect('/profile')
+
+    elif len(existing_user) == 1:
+        print "Existing user"
+        flash("You're already registered!")
+        return redirect('/')
+
+    else:
+        print "MAJOR PROBLEM!"
+        flash("You have found a website loophole... Please try again later.")
+        return redirect("/")
+
 @app.route('/profile/<id>')
 def profile(id):
     return render_template('profile.html', user=get_user(id))
+
 
 @app.route('/circlet/<id>')
 def circlet(id):

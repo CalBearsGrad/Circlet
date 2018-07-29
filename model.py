@@ -53,19 +53,17 @@ class CreditCards(db.Model):
 
     credit_card_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     number = db.Column(db.String(30), nullable=False)
-    exp_month = db.Column(db.String(2), nullable=False)
-    exp_year = db.Column(db.String(2), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
     cvc = db.Column(db.String(5), nullable=False)
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<CreditCards cc={} number={} exp_month={} exp_year={}>".format(
-                                                                        self.cc_id,
-                                                                        self.number,
-                                                                        self.exp_month,
-                                                                        self.exp_year
-                                                                        )
+        return "<CreditCards cc={} number={} date={}>".format(
+                                                                self.cc_id,
+                                                                self.number,
+                                                                self.date
+                                                                )
 
 
 
