@@ -179,35 +179,46 @@ def find_harvest_one(user):
       and will find the remaining harvest"""
     
 
-    remaining_harvest = .25
-    harvested = .75
+    remaining_harvest = .20
+    harvested = .80
 
     return remaining_harvest, harvested
 
 @app.route('/giv_donut.json')
 def giv_donut():
+    print("GIVE ME A DONUT DOT JSON")
     """Return data about Circlet."""
+
+    user_id = session["user_id"]
+    user = User.query.filter_by(user_id=user_id).first()
+    print "defined user id"
+    remaining_harvest, harvested = find_harvest_one(user)
+
+    print "found harvest"
 
     # print remaining harvest, harvest
     data_dict = {
                 "labels": [
-                    "Remaining Harvest",
                     "Harvested",
+                    "Remaining Harvest",
                 ],
+                "options": {
+                "cutoutPercentage": 95,
+                },
                 "datasets": [
                     {
-                        "data": [remaining_harvest, harvested],
+                        "data": [harvested, remaining_harvest],
                         "backgroundColor": [
-                            "#20993A",
+                            "#0c7d96",
                             "#D2D4D3",
                         ],
                         "hoverBackgroundColor": [
-                            "#1B7F31",
-                            "#787A79",
+                            "#084c5b",
+                            "#D2D4D3",
                         ]
                     }]
                 }
-
+    print "OH WO WOW WOWOWOWO OWOWOW ", jsonify(data_dict)
     return jsonify(data_dict)
 
 
