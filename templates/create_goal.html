@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+Create a goal!
+
+<form action='/create_goal' method="POST">
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Goal name</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" name="goal_name" id="goal_name" placeholder="Goal name">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="inputPassword3" class="col-sm-2 col-form-label">Description</label>
+    <div class="col-sm-8">
+      <input type="textarea" class="form-control" name="description" id="description" placeholder="Description">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="inputPassword3" class="col-sm-2 col-form-label">Goal $</label>
+    <div class="col-sm-8">
+      <input type="number" class="form-control" name="goal" id="goal" placeholder="Goal">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="inputPassword3" class="col-sm-2 col-form-label">Due date</label>
+    <div class="col-sm-8">
+      <input type="date" class="form-control" name="due_date" id="due_date" placeholder="Due date">
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-sm-8">
+      <button type="submit" class="btn btn-success">Create</button>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

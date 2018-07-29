@@ -16,6 +16,7 @@ import bcrypt
 
 import sendgrid
 from sendgrid.helpers.mail import *
+from model import connect_to_db, get_circlet, get_user, create_goal_circlet
 
 app = Flask(__name__)
 
@@ -36,7 +37,7 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """ Homepage """
-
+    session['user_id'] = "1"
     return render_template('homepage.html')
 
 
@@ -105,18 +106,31 @@ def profile(id):
 def circlet(id):
     return render_template('circlet.html', circlet=get_circlet(id))
 
-def get_circlet(id):
-    return id
+@app.route('/create-goal')
+def create_goal():
+    if 'user_id' not in session:
+        return "you must log in to create a goal"
+    user_id = session["user_id"]
+    user = get_user(user_id)
+    return render_template('create_goal.html', user=user)
+
+@app.route('/create_goal', methods=['POST'])
+def create_goal_post():
+    if 'user_id' not in session:
+        return "you must log in to create a goal"
+    user_id = session["user_id"]
+    user = get_user(user_id)
+    print(request.form)
+    create_goal_circlet(request.form.get('goal_name'), request.form.get('description'), request.form.get('goal'), request.form.get('due_date'))
+    return render_template('invite_to_circlet.html', user=user)
+
 
 def create_user(email, password):
     return "1"
 
-def get_user(id):
-    return id
-
 @app.route('/sendemail')
 def send():
-    sendalert("""
+    sendemail("""
         <html>
             <head>
             </head>
@@ -146,6 +160,8 @@ if __name__ == "__main__":
     app.debug = True
     # make sure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
+
+    connect_to_db(app)
 
     # Use the DebugToolbar
     DebugToolbarExtension(app)

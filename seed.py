@@ -8,14 +8,21 @@ from server import app
 
 def sample_user():
     """ Add sample user to DB """
-
-    print "Sample User"
-
     password = "123"
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    users = [
+        User(first_name="Madeline", last_name="Sanchez", email="madeline@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=1),
+        User(first_name="Al", last_name="A", email="a@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=2),
+        User(first_name="Bo", last_name="B", email="b@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=3),
+        User(first_name="Cy", last_name="C", email="c@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=4),
+        User(first_name="De", last_name="D", email="d@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=5),
+        User(first_name="Em", last_name="E", email="e@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=6),
+        User(first_name="Fa", last_name="F", email="f@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=7),
+        User(first_name="Gu", last_name="G", email="g@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=8)
+    ]
 
-    alyssa = User(first_name="Madeline", last_name="Sanchez", email="madeline@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=1)
-    db.session.add(alyssa)
+    for user in users:
+        db.session.add(user)
     db.session.commit()
 
 def sample_cc():
@@ -25,6 +32,18 @@ def sample_cc():
 
     cc = CreditCards(number="123456", date='2018-07-28', cvc="123")
     db.session.add(cc)
+    cards = [
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+    ]
+    for cc in cards:
+        db.session.add(cc)
     db.session.commit()
 
 
@@ -33,7 +52,7 @@ def sample_circlet():
 
     print "Sample Circlet"
 
-    circlet = Circlets(created_at='2018-07-29', activated_at='2018-07-29', description="Thing I want to buy", total_amount=100, amount_paid=0, payment_frequency=7, payment_per_interval=10)
+    circlet = Circlets(created_at='2018-07-29', due_date='2018-07-29', activated_at='2018-07-29', description="Thing I want to buy", total_amount=100, amount_paid=0, payment_frequency=7, payment_per_interval=10)
     db.session.add(circlet)
     db.session.commit()
 
