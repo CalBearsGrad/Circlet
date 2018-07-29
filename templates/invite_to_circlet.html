@@ -6,7 +6,7 @@
     <tr>
       <td>Invite?</td>
       <td>Name</td>
-      <td>Ranking</td>
+     <!--  <td>Ranking</td> -->
       <td>Reliability</td>
       <td>Member since</td>
     </tr>
@@ -14,9 +14,9 @@
           <tr>
             <td><input type="checkbox" name="{{user.user_id}}" value="{{user.user_id}}"></input></td>
             <td>{{user.first_name}} {{user.last_name}}</td>
-            <td>{{user.ranking}}</td>
+            <!-- <td>{{user.ranking}}</td> -->
             <td>{{user.reliability}}</td>
-            <td>{{user.created_at}}</td>
+            <td>{{user.created_at.strftime('%B-%d-%Y')}}</td>
           </tr>
       {% endfor %}
   </table>
