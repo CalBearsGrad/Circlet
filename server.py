@@ -20,6 +20,8 @@ import sendgrid
 from sendgrid.helpers.mail import *
 from model import connect_to_db, get_circlet, get_user, create_goal_circlet
 
+from model import User, Circlets, UserCirclets
+
 app = Flask(__name__)
 
 with open('hackathon-api-key.txt') as f:
@@ -102,7 +104,55 @@ def verify_registration():
 
 @app.route('/profile/<id>')
 def profile(id):
-    return render_template('profile.html', user=get_user(id))
+    """Render Circlet status and current Circlet attribute"""
+
+    user = User.query.filter_by(email=email).first()
+    first_name = user.first_name.first()
+
+    return render_template('profile.html', user=get_user(id), first_name=first_name(id))
+
+@app.route('/settings/<id>')
+def setting(id):
+    """Render Circlet status and current Circlet attribute"""
+    return render_template('settings.html', user=get_user(id))
+
+
+def find_harvest_one(user):
+    """Will find the harvests,
+      will return the total harvest,
+      and will find the remaining harvest"""
+    
+
+    remaining_harvest = .25
+    harvested = .75
+
+    return remaining_harvest, harvested
+
+@app.route('/giv_donut.json')
+def giv_donut():
+    """Return data about Circlet."""
+
+    # print remaining harvest, harvest
+    data_dict = {
+                "labels": [
+                    "Remaining Harvest",
+                    "Harvested",
+                ],
+                "datasets": [
+                    {
+                        "data": [remaining_harvest, harvested],
+                        "backgroundColor": [
+                            "#20993A",
+                            "#D2D4D3",
+                        ],
+                        "hoverBackgroundColor": [
+                            "#1B7F31",
+                            "#787A79",
+                        ]
+                    }]
+                }
+
+    return jsonify(data_dict)
 
 
 @app.route('/circlet/<id>')
