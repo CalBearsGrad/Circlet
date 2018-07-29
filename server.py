@@ -137,11 +137,11 @@ def check_user():
 @app.route('/profile/<id>')
 def profile(id):
     """Render Circlet status and current Circlet attribute"""
+    user_id = User.query.filter_by(user_id=id).first()
 
-    user = User.query.filter_by(email=email).first()
-    first_name = user.first_name.first()
+    first_name = user_id.first_name
 
-    return render_template('profile.html', user=get_user(id), first_name=first_name(id))
+    return render_template('profile.html', user=get_user(id), first_name=first_name)
 
 @app.route("/log_in", methods=["POST", "GET"])
 def log_in():
