@@ -1,9 +1,17 @@
 {% extends 'base_login.html' %}
 {% block content %}
+<body class="page-background">
 <style>
+.page-background {
+    background-color: #F2F2F2;
+}
+.circlet-background {
+    background-color: #F8F8F9;
+}
 img {
   border-radius: 50%;
   margin-left: -230px;
+  max-height: 170px;
 }
 h1 {
     margin-right: -100px;
@@ -11,26 +19,26 @@ h1 {
 .financial {
     border-radius: 50%;
     text-align: left;
-    margin-top: -130px;
+    margin-top: -120px;
     margin-left: 80px;
 }
 .sapling {
     width: 50px;
     height: 25%;
     margin-left: -50px;
-    margin-top: 150px;
+    margin-top: 130px;
 
 }
 .sapling-text {
     width: 50px;
     height: 25%;
-    margin-left: -40px;
-    margin-top: 180px;
+    margin-left: -50px;
+    margin-top: 160px;
     color: #1a396b;
 
 }
 .title-text {
-    margin-left: -20px;
+    margin-left: 100px;
     margin-top: 30px;
     color: #1a396b;
 }
@@ -43,12 +51,20 @@ h1 {
     border-style: ridge;
     border-radius: 15px; 
 }
+.my-circlets {
+    margin-left: 60px;
+    margin-top: 30px;
+    color: #1a396b;
+}
+.circlet-countdown {
+    color: #1a396b;
+}
 
 </style>
 
 <div class="container col-md-6 col-sm-12">
     <div class="row" style="align-content: left;">
-        <img align="left" src="/static/joyce_profile_pic.jpeg" alt="Avatar" style="width:200px">
+        <img align="left" src="/static/madeleine_profile_pic.png" alt="Avatar" style="width:200px">
         <img class="sapling" align="left" src="/static/sapling.jpeg">
         <h5 class="sapling-text">Sapling</h5>
         <h1 class="title-text" align="center">Welcome Back {{user.first_name}}</h1>
@@ -56,28 +72,23 @@ h1 {
         
     </div>
     <br>
+    <h1 class="my-circlets">My Circlets</h1>
     <br>
     <br>
+    <h2 class="circlet-countdown">Circlet Countdown to Status</h2>
     <br>
- 
 
-    <h1>My Circlets</h1>
-    <br>
-    <br>
-    <h2>Circlet Countdown to Status</h2>
-    <br>
-    <div class="row">
-        <div class="inset column">
-            <small>My goal</small>
-            <h4 class="circlet-text-one">Disneyland for the kids</h4>
-            <small>My Monthly Contribution</small>
-            <h4 class="circlet-text-one">$286</h4>
-            <span class="badge badge-pill badge-success"></span>
-                <div class="giv-history-chart">
-                    <canvas id="donutChart"></canvas>
-                    <div id="donutLegend" class="chart-legend"></div>
-                </div>
-        </div>
+    <div class="column circlet-background">
+        <small>My goal</small>
+        <h4 class="circlet-text-one">Disneyland for the kids</h4>
+        <small>My Monthly Contribution</small>
+        <h4 class="circlet-text-one">$286</h4>
+        <span class="badge badge-pill badge-success"></span>
+            <div class="giv-history-chart">
+                <canvas id="donutChart"></canvas>
+                <div id="donutLegend" class="chart-legend"></div>
+            </div>
+
 
     </div>
 
@@ -93,6 +104,7 @@ h1 {
     <br>
 
 </div>
+</body>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
 
@@ -109,7 +121,40 @@ $.get("/giv_donut.json", function (data) {
                                             options: donut_options
                                           });
     $('#donutLegend').html(myDonutChart.generateLegend());
+
 });
+
+var donut_options_two = { responsive: true, cutoutPercentage: 75 };
+
+var ctx_donut_two = $("#donutChart").get(0).getContext("2d");
+
+$.get("/giv_donut_two.json", function (data) {
+
+    var myDonutChartTwo = new Chart(ctx_donut, {
+                                            type: 'doughnut',
+                                            data: data,
+                                            options: donut_options
+                                          });
+    $('#donutLegend').html(myDonutChart.generateLegend());
+});
+
+
+
+var donut_options_three = { responsive: true, cutoutPercentage: 75 };
+
+var ctx_donut_three = $("#donutChart").get(0).getContext("2d");
+
+$.get("/giv_donut_three.json", function (data) {
+
+    var myDonutChartThree = new Chart(ctx_donut, {
+                                            type: 'doughnut',
+                                            data: data,
+                                            options: donut_options
+                                          });
+    $('#donutLegend').html(myDonutChart.generateLegend());
+});
+
+
 
 </script>
 
