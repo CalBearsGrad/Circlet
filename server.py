@@ -18,7 +18,9 @@ import bcrypt
 
 import sendgrid
 from sendgrid.helpers.mail import *
-from model import connect_to_db, get_circlet, get_user, create_goal_circlet
+from model import (connect_to_db, get_circlet, get_user, create_goal_circlet,
+get_all_users, insert_user_circlets, get_users_for_circlet, set_user_circlet_info,
+get_user_circlets, get_user_circlet, set_confirmed)
 
 from model import User, Circlets, UserCirclets
 
@@ -83,12 +85,22 @@ def verify_registration():
     existing_user = User.query.filter(User.email == email).all()
 
     if len(existing_user) == 0:
-        print "New User"
-        user = User(first_name=first_name, last_name=last_name, email=email, password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=1)
-        cc = CreditCards(number=cc_number, date=exp_date, cvc=cc_cvc)
-        db.session.add(user)
+        print "new CC added"
+        cc = CreditCards(number=cc_number, exp_month=exp_month, exp_year=exp_year, cvc=cc_cvc)
         db.session.add(cc)
         db.session.commit()
+
+
+        new_cc = CreditCards.query.filter(CreditCards.number == cc_number).one()
+        print new_cc
+
+        print "New User"
+        user = User(first_name=first_name, last_name=last_name, email=email, password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=new_cc.credit_card_id)
+        print user
+
+        db.session.add(user)
+        db.session.commit()
+
         flash("You are now registered!")
         return redirect('/profile')
 
@@ -167,6 +179,48 @@ def log_in():
 
     return render_template("log_in.html", email=email, password=password)
 
+@app.route('/log_in', methods=["POST"])
+def log_me_in():
+
+    login_email = request.form.get("email")
+    login_password = request.form.get("password")
+
+    print login_email, login_password
+
+    # Get user object
+    existing_user = User.query.filter(User.email == login_email).all()
+
+    # In DB?
+    if len(existing_user) == 1:
+        print "Email in DB"
+        existing_password = existing_user[0].password
+
+        # Correct password (hashed)?
+        if bcrypt.hashpw(login_password.encode('utf-8'), existing_password.encode('utf-8')) == existing_password:
+            if 'login' in session:
+                flash("You are already logged in!")
+                return redirect('/')
+            else:
+                #Add to session
+                session['user_id'] = existing_user[0].user_id
+                flash("Hi {}, you are now logged in!".format(existing_user[0].first_name))
+                return redirect('/')
+        else:
+            flash("Incorrect password. Please try again.")
+            return redirect('/log_in')
+
+    # Not in DB
+    elif len(existing_user) == 0:
+        print "Email not in DB"
+        flash("That email couldn't be found. Please try again.")
+        return redirect('/log_in')
+
+    else:
+        print "MAJOR PROBLEM!"
+        flash("You have found a website loophole... Please try again later.")
+        return redirect("/")
+
+
 @app.route('/settings/<id>')
 def setting(id):
     """Render Circlet status and current Circlet attribute"""
@@ -177,7 +231,7 @@ def find_harvest_one(user):
     """Will find the harvests,
       will return the total harvest,
       and will find the remaining harvest"""
-    
+
 
     remaining_harvest = .20
     harvested = .80
@@ -240,9 +294,94 @@ def create_goal_post():
         return "you must log in to create a goal"
     user_id = session["user_id"]
     user = get_user(user_id)
-    print(request.form)
-    create_goal_circlet(request.form.get('goal_name'), request.form.get('description'), request.form.get('goal'), request.form.get('due_date'))
-    return render_template('invite_to_circlet.html', user=user)
+    session['circlet'] = create_goal_circlet(request.form.get('goal_name'), request.form.get('description'), request.form.get('goal'), request.form.get('due_date')).asdict()
+    return redirect('/invite-to-circlet')
+
+@app.route('/invite-to-circlet')
+def invite_to_circlet():
+    if 'user_id' not in session or 'circlet' not in session:
+        return "you need to be logged in and creating a circlet to invite users"
+    all_users = get_all_users()
+    all_other_users = []
+    for user in all_users:
+        if user.user_id != int(session['user_id']):
+            all_other_users.append(user)
+    return render_template('invite_to_circlet.html', users=all_other_users)
+
+@app.route('/invite_to_circlet', methods=['POST'])
+def invite_to_circlet_post():
+    if 'user_id' not in session or 'circlet' not in session:
+        return "you need to be logged in and creating a circlet to invite users"
+    circlet_id = session['circlet']['circlet_id']
+    users = request.form.keys()
+    users.append(session['user_id'])
+    insert_user_circlets(circlet_id, users)
+    logged_in_user = get_user(session['user_id'])
+    for user in users:
+        user = get_user(user)
+        if user.user_id == logged_in_user.user_id:
+            continue
+        content = """
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>You are invited to a Circlet!</h1>
+        Hey! {} {} has invited you to a Circlet! The goal is <strong>${}</strong>. Click <a href="http://localhost:5000/toggle/{}/{}" style="color:blue;">here</a> to join!
+    </body>
+</html>
+            """.format(logged_in_user.first_name, logged_in_user.last_name,
+            session['circlet']['total_amount'], session['circlet']['circlet_id'], user.user_id)
+        print("contentment", content)
+        sendemail(user.email, content)
+    return redirect('/toggle/{}'.format(circlet_id))
+
+@app.route('/toggle/<circlet_id>')
+def toggle(circlet_id):
+    if 'user_id' not in session:
+        return 'you need to be logged in to toggle'
+    users = get_users_for_circlet(circlet_id)
+    return render_template('/toggle.html', users=users, circlet_id=circlet_id)
+
+@app.route('/toggle/<circlet_id>/<user_id>')
+def toggle_terrible_hack(circlet_id, user_id):
+    # XXX EXTREMELY DANGEROUS HACK - this lets anyone log in as any user without authenticating
+    # Instead we should redirect a logged out user to the login page and redirect from there to
+    # /toggle/<circlet_id> when they finish logging in
+    session['user_id'] = user_id
+    users = get_users_for_circlet(circlet_id)
+    return render_template('/toggle.html', users=users, circlet_id=circlet_id)
+
+@app.route('/toggle/<circlet_id>', methods=['POST'])
+def toggle_post(circlet_id):
+    if 'user_id' not in session:
+        return 'you need to be logged in to toggle'
+    set_user_circlet_info(session['user_id'], circlet_id, request.form.get('monthly_payment'))
+    return redirect('/confirm/{}'.format(circlet_id))
+
+@app.route('/confirm/<circlet_id>')
+def confirm(circlet_id):
+    if 'user_id' not in session:
+        return 'you need to be logged in to confirm'
+    user_circlets = get_user_circlets(circlet_id)
+    for uc in user_circlets:
+        if not uc.monthly_payment:
+            return render_template('confirmation_pending.html', user_circlets=user_circlets)
+    return render_template('confirm.html', user_circlets=user_circlets, circlet_id=circlet_id)
+
+@app.route('/post_final_confirmation/<circlet_id>', methods=['POST'])
+def post_final_confirmation(circlet_id):
+    if 'user_id' not in session:
+        return 'you need to be logged in to post final confirmation'
+    set_confirmed(session['user_id'], circlet_id)
+    user_circlets = get_user_circlets(circlet_id)
+    for uc in user_circlets:
+        print(uc)
+        if not uc.is_confirmed:
+            return render_template('confirm.html', user_circlets=user_circlets, circlet_id=circlet_id)
+    return redirect('/circlet/{}'.format(circlet_id))
+
 
 
 def create_user(email, password):
@@ -263,13 +402,18 @@ def send():
     return "ok"
 
 def sendemail(recipient, alertbody):
+    print("SENDING EMAIL TO", recipient, "BODY", alertbody)
     sg = sendgrid.SendGridAPIClient(apikey=sendgrid_api_key)
     from_email = Email("davidvgalbraith@gmail.com")
     to_email = Email(recipient)
-    subject = "Sending with SendGrid is Fun"
+    subject = "Message from Circlet"
     content = Content("text/html", alertbody)
     mail = Mail(from_email, subject, to_email, content)
     response = sg.client.mail.send.post(request_body=mail.get())
+    print("SEND EMAIL RESPONSE")
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
 
 
 
@@ -284,6 +428,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<table>
+  <tr>
+    <td>Name</td>
+    <td>Monthly payment amount</td>
+  </tr>
+    {% for user_circlet in user_circlets %}
+        <tr>
+          <td>{{user_circlet.user.first_name}} {{user_circlet.user.last_name}}</td>
+          <td style="text-align: center;">{% if user_circlet.monthly_payment %}{{user_circlet.monthly_payment}}{% else %}<span style="color:red;">Pending</span>{% endif %}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -18,7 +18,8 @@ def sample_user():
         User(first_name="De", last_name="D", email="d@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=5),
         User(first_name="Em", last_name="E", email="e@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=6),
         User(first_name="Fa", last_name="F", email="f@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=7),
-        User(first_name="Gu", last_name="G", email="g@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=8)
+        User(first_name="Gu", last_name="G", email="g@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=8),
+        User(first_name="Dave", last_name="Galbraith", email="davidvgalbraith@gmail.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=9)
     ]
 
     for user in users:
@@ -41,6 +42,7 @@ def sample_cc():
         CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
         CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
         CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
+        CreditCards(number="123456", exp_month= "01", exp_year="20", cvc="123"),
     ]
     for cc in cards:
         db.session.add(cc)
@@ -52,7 +54,7 @@ def sample_circlet():
 
     print "Sample Circlet"
 
-    circlet = Circlets(created_at='2018-07-29', due_date='2018-07-29', activated_at='2018-07-29', description="Thing I want to buy", total_amount=100, amount_paid=0, payment_frequency=7, payment_per_interval=10)
+    circlet = Circlets(created_at='2018-07-29', due_date='2018-07-29', activated_at='2018-07-29', description="Thing I want to buy", total_amount=100, amount_paid=0, payment_per_interval=10)
     db.session.add(circlet)
     db.session.commit()
 
