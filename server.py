@@ -18,7 +18,8 @@ import bcrypt
 
 import sendgrid
 from sendgrid.helpers.mail import *
-from model import connect_to_db, get_circlet, get_user, create_goal_circlet
+from model import (connect_to_db, get_circlet, get_user, create_goal_circlet,
+get_all_users, insert_user_circlets, get_users_for_circlet, set_user_circlet_info)
 
 from model import User, Circlets, UserCirclets
 
@@ -221,9 +222,49 @@ def create_goal_post():
         return "you must log in to create a goal"
     user_id = session["user_id"]
     user = get_user(user_id)
-    print(request.form)
-    create_goal_circlet(request.form.get('goal_name'), request.form.get('description'), request.form.get('goal'), request.form.get('due_date'))
-    return render_template('invite_to_circlet.html', user=user)
+    session['circlet'] = create_goal_circlet(request.form.get('goal_name'), request.form.get('description'), request.form.get('goal'), request.form.get('due_date')).asdict()
+    return redirect('/invite-to-circlet')
+
+@app.route('/invite-to-circlet')
+def invite_to_circlet():
+    if 'user_id' not in session or 'circlet' not in session:
+        return "you need to be logged in and creating a circlet to invite users"
+    all_users = get_all_users()
+    all_other_users = []
+    for user in all_users:
+        if user.user_id != int(session['user_id']):
+            all_other_users.append(user)
+    return render_template('invite_to_circlet.html', users=all_other_users)
+
+@app.route('/invite_to_circlet', methods=['POST'])
+def invite_to_circlet_post():
+    if 'user_id' not in session or 'circlet' not in session:
+        return "you need to be logged in and creating a circlet to invite users"
+    circlet_id = session['circlet']['circlet_id']
+    users = request.form.keys()
+    users.append(session['user_id'])
+    insert_user_circlets(circlet_id, users)
+    return redirect('/toggle/{}'.format(circlet_id))
+
+@app.route('/toggle/<circlet_id>')
+def toggle(circlet_id):
+    if 'user_id' not in session:
+        return 'you need to be logged in to toggle'
+    users = get_users_for_circlet(circlet_id)
+    return render_template('/toggle.html', users=users, circlet_id=circlet_id)
+
+@app.route('/toggle/<circlet_id>', methods=['POST'])
+def toggle_post(circlet_id):
+    if 'user_id' not in session:
+        return 'you need to be logged in to toggle'
+    set_user_circlet_info(session['user_id'], circlet_id, request.form.get('monthly_payment'))
+    return redirect('/confirm/{}'.format(circlet_id))
+
+@app.route('/confirm/<circlet_id>')
+def confirm(circlet_id):
+    if 'user_id' not in session:
+        return 'you need to be logged in to confirm'
+    return render_template('confirm.html')
 
 
 def create_user(email, password):

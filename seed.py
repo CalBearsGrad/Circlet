@@ -52,7 +52,7 @@ def sample_circlet():
 
     print "Sample Circlet"
 
-    circlet = Circlets(created_at='2018-07-29', due_date='2018-07-29', activated_at='2018-07-29', description="Thing I want to buy", total_amount=100, amount_paid=0, payment_frequency=7, payment_per_interval=10)
+    circlet = Circlets(created_at='2018-07-29', due_date='2018-07-29', activated_at='2018-07-29', description="Thing I want to buy", total_amount=100, amount_paid=0, payment_per_interval=10)
     db.session.add(circlet)
     db.session.commit()
 
