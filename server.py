@@ -19,7 +19,8 @@ import bcrypt
 import sendgrid
 from sendgrid.helpers.mail import *
 from model import (connect_to_db, get_circlet, get_user, create_goal_circlet,
-get_all_users, insert_user_circlets, get_users_for_circlet, set_user_circlet_info)
+get_all_users, insert_user_circlets, get_users_for_circlet, set_user_circlet_info,
+get_user_circlets, get_user_circlet, set_confirmed)
 
 from model import User, Circlets, UserCirclets
 
@@ -42,7 +43,7 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """ Homepage """
-    # session['user_id'] = "1"
+    session['user_id'] = "1"
     return render_template('homepage.html')
 
 
@@ -334,7 +335,24 @@ def toggle_post(circlet_id):
 def confirm(circlet_id):
     if 'user_id' not in session:
         return 'you need to be logged in to confirm'
-    return render_template('confirm.html')
+    user_circlets = get_user_circlets(circlet_id)
+    for uc in user_circlets:
+        if not uc.monthly_payment:
+            return render_template('confirmation_pending.html', user_circlets=user_circlets)
+    return render_template('confirm.html', user_circlets=user_circlets, circlet_id=circlet_id)
+
+@app.route('/post_final_confirmation/<circlet_id>', methods=['POST'])
+def post_final_confirmation(circlet_id):
+    if 'user_id' not in session:
+        return 'you need to be logged in to post final confirmation'
+    set_confirmed(session['user_id'], circlet_id)
+    user_circlets = get_user_circlets(circlet_id)
+    for uc in user_circlets:
+        print(uc)
+        if not uc.is_confirmed:
+            return render_template('confirm.html', user_circlets=user_circlets, circlet_id=circlet_id)
+    return redirect('/circlet/{}'.format(circlet_id))
+
 
 
 def create_user(email, password):
