@@ -10,17 +10,55 @@ h1 {
 }
 .financial {
     border-radius: 50%;
-    text-align: center;
+    text-align: left;
+    margin-top: -130px;
+    margin-left: 80px;
 }
+.sapling {
+    width: 50px;
+    height: 25%;
+    margin-left: -50px;
+    margin-top: 150px;
+
+}
+.sapling-text {
+    width: 50px;
+    height: 25%;
+    margin-left: -40px;
+    margin-top: 180px;
+    color: #1a396b;
+
+}
+.title-text {
+    margin-left: -20px;
+    margin-top: 30px;
+    color: #1a396b;
+}
+.circlet-text-one {
+    margin-left: 0px;
+    margin-top: 0px;
+    color: #1a396b;
+}
+.inset {
+    border-style: ridge;
+    border-radius: 15px; 
+}
+
 </style>
 
 <div class="container col-md-6 col-sm-12">
     <div class="row" style="align-content: left;">
         <img align="left" src="/static/joyce_profile_pic.jpeg" alt="Avatar" style="width:200px">
-        <h1 align="center">Welcome Back {{user.first_name}}</h1>
-        <img align="left" src="/static/sapling.jpeg" style="width:50px">
+        <img class="sapling" align="left" src="/static/sapling.jpeg">
+        <h5 class="sapling-text">Sapling</h5>
+        <h1 class="title-text" align="center">Welcome Back {{user.first_name}}</h1>
+        <div class="financial"><small>{{ financial_tips }}</small></div>
+        
     </div>
-<div class="financial"><small>{{ financial_tips }}</small></div>
+    <br>
+    <br>
+    <br>
+    <br>
  
 
     <h1>My Circlets</h1>
@@ -29,19 +67,20 @@ h1 {
     <h2>Circlet Countdown to Status</h2>
     <br>
     <div class="row">
-        <span class="badge badge-pill badge-success"></span>
-            <div class="giv-history-chart">
-                <canvas id="donutChart"></canvas>
-                <div id="donutLegend" class="chart-legend"></div>
-            </div>
+        <div class="inset column">
+            <small>My goal</small>
+            <h4 class="circlet-text-one">Disneyland for the kids</h4>
+            <small>My Monthly Contribution</small>
+            <h4 class="circlet-text-one">$286</h4>
+            <span class="badge badge-pill badge-success"></span>
+                <div class="giv-history-chart">
+                    <canvas id="donutChart"></canvas>
+                    <div id="donutLegend" class="chart-legend"></div>
+                </div>
+        </div>
 
     </div>
 
-    <span class="badge badge-pill badge-success"></span>
-        <div class="giv-history-chart">
-            <canvas id="donutChart"></canvas>
-            <div id="donutLegend" class="chart-legend"></div>
-        </div>
     <br>
     <br>
     <br>
@@ -52,14 +91,18 @@ h1 {
     <br>
     <br>
     <br>
-</div>
 
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
-console.log("HEALJALDASDFASERASDfasc")
+
+
 var donut_options = { responsive: true, cutoutPercentage: 75 };
+
 var ctx_donut = $("#donutChart").get(0).getContext("2d");
+
 $.get("/giv_donut.json", function (data) {
-    console.log("GIVE ME A DONUT!!!")
+
     var myDonutChart = new Chart(ctx_donut, {
                                             type: 'doughnut',
                                             data: data,
@@ -67,6 +110,7 @@ $.get("/giv_donut.json", function (data) {
                                           });
     $('#donutLegend').html(myDonutChart.generateLegend());
 });
+
 </script>
 
 

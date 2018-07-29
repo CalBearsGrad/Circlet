@@ -11,3 +11,39 @@
 .label {
     font-weight: 800;
 }
+img {
+  border-radius: 50%;
+  margin-left: -230px;
+}
+h1 {
+    margin-right: -100px;
+}
+.financial {
+    border-radius: 50%;
+    text-align: center;
+}
+.sapling {
+    width: 50px;
+    height: 25%;
+    margin-left: -50px;
+    margin-top: 150px;
+
+}
+.sapling-text {
+    width: 50px;
+    height: 25%;
+    margin-left: -40px;
+    margin-top: 180px;
+    color: #1a396b;
+
+}
+.title-text {
+    margin-left: -40px;
+    margin-top: 30px;
+    color: #1a396b;
+}
+.circlet-text-one {
+    margin-left: -40px;
+    margin-top: 30px;
+    color: #1a396b;
+}
