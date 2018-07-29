@@ -9,8 +9,13 @@ from jinja2 import StrictUndefined
 
 from flask import (Flask, render_template, redirect, request, flash, session, jsonify)
 from flask_debugtoolbar import DebugToolbarExtension
+import sendgrid
+from sendgrid.helpers.mail import *
 
 app = Flask(__name__)
+
+with open('hackathon-api-key.txt') as f:
+    sendgrid_api_key = f.read().strip()
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = os.environ['APP_KEY']
@@ -48,6 +53,30 @@ def create_user(email, password):
 
 def get_user(id):
     return None
+
+@app.route('/sendemail')
+def send():
+    sendalert("""
+        <html>
+            <head>
+            </head>
+            <body>
+                <h1>Sent from Python</h1>
+                I like python.
+            </body>
+        </html>
+    """)
+    return "ok"
+
+def sendemail(recipient, alertbody):
+    sg = sendgrid.SendGridAPIClient(apikey=sendgrid_api_key)
+    from_email = Email("davidvgalbraith@gmail.com")
+    to_email = Email(recipient)
+    subject = "Sending with SendGrid is Fun"
+    content = Content("text/html", alertbody)
+    mail = Mail(from_email, subject, to_email, content)
+    response = sg.client.mail.send.post(request_body=mail.get())
+
 
 
 #########################################################################
