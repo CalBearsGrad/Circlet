@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<form action="/toggle/{{circlet_id}}" method="POST">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Monthly Payment</label>
+    <div class="col-sm-8">
+      <input type="range" id="rangeInput" name="rangeInput" step="1" min="0" max="100">
+      <label id="rangeText" />
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="inputPassword3" class="col-sm-2 col-form-label">Payment Frequency (weeks)</label>
+    <div class="col-sm-8">
+      <input type="number" class="form-control" name="payment_frequency" id="payment_frequency" placeholder="Payment frequency">
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-sm-8">
+      <button type="submit" class="btn btn-success">Submit</button>
+    </div>
+  </div>
+</form>
+
+<script>
+$(function () {
+
+    // on page load, set the text of the label based the value of the range
+    $('#rangeText').text($('#rangeInput').val());
+
+    // setup an event handler to set the text when the range value is dragged (see event for input) or changed (see event for change)
+    $('#rangeInput').on('input change', function () {
+        $('#rangeText').text($(this).val());
+    });
+
+});
+</script>
+
+{% endblock %}

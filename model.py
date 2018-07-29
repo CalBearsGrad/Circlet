@@ -95,6 +95,20 @@ class Circlets (db.Model):
                                                                         self.payment_frequency,
                                                                         self.payment_per_interval
                                                                         )
+    def asdict(self):
+        return {
+            'circlet_id': self.circlet_id,
+            'created_at': self.created_at,
+            'due_date': self.due_date,
+            'activated_at': self.activated_at,
+            'description': self.description,
+            'goal_name': self.goal_name,
+            'total_amount': self.total_amount,
+            'amount_paid': self.amount_paid,
+            'payment_frequency': self.payment_frequency,
+            'payment_per_interval': self.payment_per_interval,
+            'is_complete': self.is_complete,
+        }
 
 class UserCirclets (db.Model):
 
@@ -104,15 +118,20 @@ class UserCirclets (db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     circlet_id = db.Column(db.Integer, db.ForeignKey('circlets.circlet_id'), nullable=False)
     is_confirmed = db.Column(db.Boolean, default=False)
+    monthly_payment = db.Column(db.Float, nullable=True)
+    payment_frequency = db.Column(db.Float, nullable=True)
+
+    user = db.relationship("User", backref="user_circlets")
+    circlet = db.relationship('Circlets', backref="user_circlets")
 
     def __repr__(self):
         """Provide helpful representation when printed."""
-        return "<UserCirclets uc_id{=} user_id={} circlet_id={} is_confirmed{}>".format(
-                                                                        self.uc_id,
-                                                                        self.user_id,
-                                                                        self.circlet_id,
-                                                                        self.is_confirmed
-                                                                        )
+        return "<UserCirclets uc_id={} user_id={} circlet_id={} is_confirmed={}>".format(
+            self.uc_id,
+            self.user_id,
+            self.circlet_id,
+            self.is_confirmed
+        )
 
 def get_user(id):
     return db.session.query(User).get(id)
@@ -127,6 +146,34 @@ def create_goal_circlet(goal_name, description, goal_total, due_date):
     )
     db.session.add(c)
     db.session.commit()
+    return c
+
+def get_all_users():
+    return db.session.query(User).all()
+
+def insert_user_circlets(circlet_id, user_ids):
+    for user_id in user_ids:
+        db.session.add(UserCirclets(user_id=user_id, circlet_id=circlet_id))
+    db.session.commit()
+
+def get_users_for_circlet(circlet_id):
+    circlets = db.session.query(UserCirclets).filter_by(circlet_id=circlet_id).all()
+    users = []
+    for circlet in circlets:
+        users.append(circlet.user)
+    return users
+
+def set_user_circlet_info(user_id, circlet_id, monthly_payment, payment_frequency):
+    print("userId", user_id, "cirlcist", circlet_id)
+    circlet = db.session.query(UserCirclets).filter_by(circlet_id=circlet_id, user_id = user_id).one()
+    if not circlet:
+        raise Exception("Missing circlet")
+    circlet.monthly_payment = monthly_payment
+    circlet.payment_frequency = payment_frequency
+    db.session.add(circlet)
+    db.session.commit()
+
+
 
 ##############################################################################
 # Helper functions
