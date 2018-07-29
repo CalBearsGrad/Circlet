@@ -45,11 +45,14 @@
   <div class="form-group row">
     <label for="inputExpDate" class="col-sm-2 col-form-label"> Expiration Date </label>
     <div class="col-sm-4">
-      <input type="date" class="form-control" name="cc-expiration" id="inputExpDate" required>
+      <input type="date" class="form-control" name="cc-month" id="inputmonth" required>
+    </div>
+    <div class="col-sm-4">
+      <input type="date" class="form-control" name="cc-year" id="inputyear" required>
     </div>
     <label for="inputCVC" class="col-form-label">CVC </label>
     <div class="col-sm-4">
-      <input type="number" class="form-control" name="cc-cvc" id="inputCVC" placeholder="CVC" required>
+      <input type="number" class="form-control" name="cc-cvc" id="inputCVC" placeholder="CVC" max="99999" required>
     </div>
   </div>
   </fieldset>

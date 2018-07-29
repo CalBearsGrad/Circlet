@@ -10,6 +10,8 @@ from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash, session, jsonify)
 from model import User, CreditCards, Circlets, UserCirclets
 
+from model import connect_to_db, db
+
 from flask_debugtoolbar import DebugToolbarExtension
 
 import bcrypt
@@ -62,7 +64,8 @@ def verify_registration():
     password = request.form.get("password")
 
     cc_number = request.form.get("cc-number")
-    exp_date = request.form.get("cc-expiration")
+    exp_month = request.form.get("cc-month")
+    exp_year= request.form.get("cc-year")
     cc_cvc = request.form.get("cc-cvc")
 
 
@@ -82,7 +85,7 @@ def verify_registration():
         user = User(first_name=first_name, last_name=last_name, email=email, password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=1)
         cc = CreditCards(number=cc_number, date=exp_date, cvc=cc_cvc)
         db.session.add(user)
-        db.session.add(credit_card)
+        db.session.add(cc)
         db.session.commit()
         flash("You are now registered!")
         return redirect('/profile')
