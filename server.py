@@ -96,7 +96,7 @@ def verify_registration():
         print "New User"
         user = User(first_name=first_name, last_name=last_name, email=email, password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=new_cc.credit_card_id)
         print user
-        
+
         db.session.add(user)
         db.session.commit()
 
@@ -170,7 +170,7 @@ def find_harvest_one(user):
     """Will find the harvests,
       will return the total harvest,
       and will find the remaining harvest"""
-    
+
 
     remaining_harvest = .25
     harvested = .75
@@ -244,12 +244,40 @@ def invite_to_circlet_post():
     users = request.form.keys()
     users.append(session['user_id'])
     insert_user_circlets(circlet_id, users)
+    logged_in_user = get_user(session['user_id'])
+    for user in users:
+        user = get_user(user)
+        if user.user_id == logged_in_user.user_id:
+            continue
+        content = """
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>You are invited to a Circlet!</h1>
+        Hey! {} {} has invited you to a Circlet! The goal is <strong>${}</strong>. Click <a href="http://localhost:5000/toggle/{}/{}" style="color:blue;">here</a> to join!
+    </body>
+</html>
+            """.format(logged_in_user.first_name, logged_in_user.last_name,
+            session['circlet']['total_amount'], session['circlet']['circlet_id'], user.user_id)
+        print("contentment", content)
+        sendemail(user.email, content)
     return redirect('/toggle/{}'.format(circlet_id))
 
 @app.route('/toggle/<circlet_id>')
 def toggle(circlet_id):
     if 'user_id' not in session:
         return 'you need to be logged in to toggle'
+    users = get_users_for_circlet(circlet_id)
+    return render_template('/toggle.html', users=users, circlet_id=circlet_id)
+
+@app.route('/toggle/<circlet_id>/<user_id>')
+def toggle_terrible_hack(circlet_id, user_id):
+    # XXX EXTREMELY DANGEROUS HACK - this lets anyone log in as any user without authenticating
+    # Instead we should redirect a logged out user to the login page and redirect from there to
+    # /toggle/<circlet_id> when they finish logging in
+    session['user_id'] = user_id
     users = get_users_for_circlet(circlet_id)
     return render_template('/toggle.html', users=users, circlet_id=circlet_id)
 
@@ -285,13 +313,18 @@ def send():
     return "ok"
 
 def sendemail(recipient, alertbody):
+    print("SENDING EMAIL TO", recipient, "BODY", alertbody)
     sg = sendgrid.SendGridAPIClient(apikey=sendgrid_api_key)
     from_email = Email("davidvgalbraith@gmail.com")
     to_email = Email(recipient)
-    subject = "Sending with SendGrid is Fun"
+    subject = "Message from Circlet"
     content = Content("text/html", alertbody)
     mail = Mail(from_email, subject, to_email, content)
     response = sg.client.mail.send.post(request_body=mail.get())
+    print("SEND EMAIL RESPONSE")
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
 
 
 
@@ -306,6 +339,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')
