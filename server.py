@@ -257,7 +257,7 @@ def toggle(circlet_id):
 def toggle_post(circlet_id):
     if 'user_id' not in session:
         return 'you need to be logged in to toggle'
-    set_user_circlet_info(session['user_id'], circlet_id, request.form.get('monthly_payment'), request.form.get('payment_frequency'))
+    set_user_circlet_info(session['user_id'], circlet_id, request.form.get('monthly_payment'))
     return redirect('/confirm/{}'.format(circlet_id))
 
 @app.route('/confirm/<circlet_id>')

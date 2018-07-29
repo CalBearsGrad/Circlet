@@ -81,18 +81,16 @@ class Circlets (db.Model):
     goal_name = db.Column(db.String(50), nullable=True)
     total_amount = db.Column(db.Integer, nullable=False)
     amount_paid = db.Column(db.Integer, nullable=False)
-    payment_frequency = db.Column(db.Integer, nullable=True)  # Number of days
     payment_per_interval = db.Column(db.Integer, nullable=True)
     is_complete = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         """Provide helpful representation when printed."""
-        return "<Circlet created_at={} description={} total_amount={} amount_paid={}, payment_frequency={}, payment_per_interval={}>".format(
+        return "<Circlet created_at={} description={} total_amount={} amount_paid={}, payment_per_interval={}>".format(
                                                                         self.created_at,
                                                                         self.description,
                                                                         self.total_amount,
                                                                         self.amount_paid,
-                                                                        self.payment_frequency,
                                                                         self.payment_per_interval
                                                                         )
     def asdict(self):
@@ -105,7 +103,6 @@ class Circlets (db.Model):
             'goal_name': self.goal_name,
             'total_amount': self.total_amount,
             'amount_paid': self.amount_paid,
-            'payment_frequency': self.payment_frequency,
             'payment_per_interval': self.payment_per_interval,
             'is_complete': self.is_complete,
         }
@@ -119,7 +116,6 @@ class UserCirclets (db.Model):
     circlet_id = db.Column(db.Integer, db.ForeignKey('circlets.circlet_id'), nullable=False)
     is_confirmed = db.Column(db.Boolean, default=False)
     monthly_payment = db.Column(db.Float, nullable=True)
-    payment_frequency = db.Column(db.Float, nullable=True)
 
     user = db.relationship("User", backref="user_circlets")
     circlet = db.relationship('Circlets', backref="user_circlets")
@@ -163,13 +159,12 @@ def get_users_for_circlet(circlet_id):
         users.append(circlet.user)
     return users
 
-def set_user_circlet_info(user_id, circlet_id, monthly_payment, payment_frequency):
+def set_user_circlet_info(user_id, circlet_id, monthly_payment):
     print("userId", user_id, "cirlcist", circlet_id)
     circlet = db.session.query(UserCirclets).filter_by(circlet_id=circlet_id, user_id = user_id).one()
     if not circlet:
         raise Exception("Missing circlet")
     circlet.monthly_payment = monthly_payment
-    circlet.payment_frequency = payment_frequency
     db.session.add(circlet)
     db.session.commit()
 
