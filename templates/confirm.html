@@ -3,14 +3,26 @@
 
 <table>
   <tr>
-    <td>Name</td>
-    <td>Monthly payment amount</td>
-    <td>Final confirmation</td>
+    <td class="label">Name</td>
+    <td> | </td>
+    <td class="label">Goal</td>
+    <td> | </td>
+    <td class="label">Due Date</td>
+    <td> | </td>
+    <td class="label">Monthly Payment</td>
+    <td> | </td>
+    <td class="label">Final Confirmation</td>
   </tr>
     {% for user_circlet in user_circlets %}
         <tr>
           <td>{{user_circlet.user.first_name}} {{user_circlet.user.last_name}}</td>
-          <td>{{user_circlet.monthly_payment}}</td>
+          <td></td>
+          <td>{{user_circlet.circlet.goal_name}}</td>
+          <td></td>
+          <td style="text-align: center;">{{user_circlet.circlet.due_date.strftime('%B-%d-%Y')}}</td>
+          <td></td>
+          <td style="text-align: center;">{{user_circlet.monthly_payment}}</td>
+          <td></td>
           <td style="text-align: center;">
             {% if user_circlet.is_confirmed %}
               <span style="color:green;">Confirmed</span>
@@ -21,9 +33,10 @@
         </tr>
     {% endfor %}
 </table>
-<div class="irreversible-oath">Click here to irrevocably forever commit yourself to this circlet.</div>
+<div class="irreversible-oath">Sign here to irrevocably forever commit yourself to this circlet.</div>
 <form action="/post_final_confirmation/{{circlet_id}}" method="POST">
-  <button type="submit">Submit</button>
+  <input type="text" class="form-control" name= "signature" required> <br>
+  <button type="submit" class="btn btn-success">Submit</button>
 </form>
 
 {% endblock %}
