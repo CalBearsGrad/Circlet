@@ -85,7 +85,7 @@ def verify_registration():
     if len(existing_user) == 0:
         print "New User"
         user = User(first_name=first_name, last_name=last_name, email=email, password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=1)
-        cc = CreditCards(number=cc_number, date=exp_date, cvc=cc_cvc)
+        cc = CreditCards(number=cc_number, exp_month= exp_month, exp_year=exp_year, cvc=cc_cvc)
         db.session.add(user)
         db.session.add(cc)
         db.session.commit()
