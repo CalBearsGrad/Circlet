@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_login.html' %}
 {% block content %}
 <style>
 img {
@@ -11,7 +11,7 @@ img {
     <div class="row" style="align-content: left;">
         <img align="left" src="/static/joyce_profile_pic.jpeg" alt="Avatar" style="width:200px">
         <img align="left" src="/static/sapling.jpg" style="width:50px">
-        <h1>Welcome Back {{first_name}}</h1>
+        <h1>Welcome Back {{user.first_name}}</h1>
     </div>
 
 
