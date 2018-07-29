@@ -26,7 +26,7 @@ class User(db.Model):
     password = db.Column(db.String(75), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
     reliability = db.Column(db.Integer, nullable=False)
-    ranking = db.Column(db.Integer, nullable=False)
+    ranking = db.Column(db.String(20), nullable=False)
     credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.credit_card_id'), nullable=False, unique=True)
 
     # Define a relationship
