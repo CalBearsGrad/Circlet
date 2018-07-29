@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 
-LOOOOOK AT THIS COOOOOOLIO CIRCLET!!!!
+<!-- {{circlet}} <br> -->
+
+<h4>Circlet</h4>
+
+<span class="label">Name: </span> {{circlet.goal_name}} <br>
+<span class="label">Description: </span> {{circlet.description}} <br>
+<span class="label">Goal Total: </span> {{circlet.total_amount}} <br>
+<span class="label">Amount Paid: </span> {{circlet.amount_paid}}
 
 {% endblock %}
