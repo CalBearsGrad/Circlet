@@ -83,12 +83,22 @@ def verify_registration():
     existing_user = User.query.filter(User.email == email).all()
 
     if len(existing_user) == 0:
-        print "New User"
-        user = User(first_name=first_name, last_name=last_name, email=email, password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=1)
-        cc = CreditCards(number=cc_number, exp_month= exp_month, exp_year=exp_year, cvc=cc_cvc)
-        db.session.add(user)
+        print "new CC added"
+        cc = CreditCards(number=cc_number, exp_month=exp_month, exp_year=exp_year, cvc=cc_cvc)
         db.session.add(cc)
         db.session.commit()
+
+
+        new_cc = CreditCards.query.filter(CreditCards.number == cc_number).one()
+        print new_cc
+
+        print "New User"
+        user = User(first_name=first_name, last_name=last_name, email=email, password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=new_cc.credit_card_id)
+        print user
+        
+        db.session.add(user)
+        db.session.commit()
+
         flash("You are now registered!")
         return redirect('/profile')
 

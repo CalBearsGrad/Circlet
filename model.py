@@ -61,7 +61,7 @@ class CreditCards(db.Model):
         """Provide helpful representation when printed."""
 
         return "<CreditCards cc={} number={} exp_month={} exp_year={}>".format(
-                                                                        self.cc_id,
+                                                                        self.credit_card_id,
                                                                         self.number,
                                                                         self.exp_month,
                                                                         self.exp_year
