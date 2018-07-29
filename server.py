@@ -23,6 +23,7 @@ get_all_users, insert_user_circlets, get_users_for_circlet, set_user_circlet_inf
 get_user_circlets, get_user_circlet, set_confirmed)
 
 from model import User, Circlets, UserCirclets
+import random
 
 app = Flask(__name__)
 
@@ -148,24 +149,7 @@ def verify_registration():
 #     else:
 #         return redirect("/preferences-small-giv")
 
-@app.route('/profile/<id>')
-def profile(id):
-    """Render Circlet status and current Circlet attribute"""
-    # user = get_user(id)
 
-    # user = User.query.filter_by(email=email).first()
-    # user_id = User.query.filter_by(user_id=id).first()
-    # first_name = user.first_name.first()
-
-    # user = User.query.filter_by(email=email).first()
-    # first_name = user.first_name.first()
-    user = get_user(id)
-    print user
-
-
-    return render_template('profile.html', user=user)
-
-    # return render_template('profile.html', user=get_user(id), first_name=first_name(id))
 
 @app.route('/log_in')
 def log_in():
@@ -234,117 +218,160 @@ def find_harvest_one(user):
     """Will find the harvests,
       will return the total harvest,
       and will find the remaining harvest"""
+    
 
-
-    remaining_harvest = .25
-    harvested = .75
+    remaining_harvest = .20
+    harvested = .80
 
     return remaining_harvest, harvested
 
+def give_financial_tips():
+
+    tips = ["If you are living paycheck-to-paycheck, before you do anything else, stop that. Figure out where you can cut costs, even if it is by a few dollars a week. The best way to do this is to start tracking where you are spending your money. That way you can make changes and set goals around your spending. That will enable you to begin saving right away without having to make more money. - Sharon Compton Game",
+            "With the recent surge in equity values, remember that long-term performance, particularly for the portfolios of retirees, is better when the stock allocation is returned to the target allocation on a regular basis. In simple words, with the elevated values of equities we are currently seeing, it is a good time to lighten the equity load and add to the bond allocation. -Walt Woerheide, PhD, ChFC, CFP, RFC, Professor of Investments",
+            "Without a strategic debt management plan, you will likely continue to accrue debt which puts you further behind and makes it harder to escape. Debt management includes strategically paying down the most expensive debt first, like credit card debt, then personal loans, then student loans, and then housing debt. However, debt management is also just as much about avoiding future debt and looking for areas to cut back spending or at least, spend smarter. If you find yourself buying coffee every day or eating out at lunch, think about packing lunches or buying a coffee machine, which could save you money in the long term. -Ajamu Loving, PhD, Professor of Finance"
+]
+
+    financial_tips = random.choice(tips);
+
+    return financial_tips
+
+@app.route('/profile/<id>')
+def profile(id):
+    """Render Circlet status and current Circlet attribute"""
+    # user = get_user(id)
+
+    # user = User.query.filter_by(email=email).first()
+    # user_id = User.query.filter_by(user_id=id).first()
+    # first_name = user.first_name.first()
+
+    # user = User.query.filter_by(email=email).first()
+    # first_name = user.first_name.first()
+    financial_tips = give_financial_tips()
+    user = get_user(id)
+    print user
+
+
+    return render_template('profile.html', user=user, financial_tips=financial_tips)
+
+    # return render_template('profile.html', user=get_user(id), first_name=first_name(id))
+
 @app.route('/giv_donut.json')
 def giv_donut():
+    print("GIVE ME A DONUT DOT JSON")
     """Return data about Circlet."""
+
+    user_id = session["user_id"]
+    user = User.query.filter_by(user_id=user_id).first()
+    print "defined user id"
+    remaining_harvest, harvested = find_harvest_one(user)
+
+    print "found harvest"
 
     # print remaining harvest, harvest
     data_dict = {
                 "labels": [
-                    "Remaining Harvest",
                     "Harvested",
+                    "Remaining Harvest",
                 ],
+                "options": {
+                "cutoutPercentage": 95,
+                },
                 "datasets": [
                     {
-                        "data": [remaining_harvest, harvested],
+                        "data": [harvested, remaining_harvest],
                         "backgroundColor": [
-                            "#20993A",
+                            "#0c7d96",
                             "#D2D4D3",
                         ],
                         "hoverBackgroundColor": [
-                            "#1B7F31",
-                            "#787A79",
+                            "#084c5b",
+                            "#D2D4D3",
                         ]
                     }]
                 }
-
+    print "OH WO WOW WOWOWOWO OWOWOW ", jsonify(data_dict)
     return jsonify(data_dict)
+
 
 # Donut chart number 2 profile page
 
 
-def find_harvest_two(user):
-    """Will find the harvests,
-      will return the total harvest,
-      and will find the remaining harvest"""
+# def find_harvest_two(user):
+#     """Will find the harvests,
+#       will return the total harvest,
+#       and will find the remaining harvest"""
 
 
-    remaining_harvest = .25
-    harvested = .75
+#     remaining_harvest = .25
+#     harvested = .75
 
-    return remaining_harvest, harvested
+#     return remaining_harvest, harvested
 
-@app.route('/giv_donut_2.json')
-def giv_donut_2():
-    """Return data about Circlet."""
+# @app.route('/giv_donut_2.json')
+# def giv_donut_2():
+#     """Return data about Circlet."""
 
-    # print remaining harvest, harvest
-    data_dict = {
-                "labels": [
-                    "Remaining Harvest",
-                    "Harvested",
-                ],
-                "datasets": [
-                    {
-                        "data": [remaining_harvest, harvested],
-                        "backgroundColor": [
-                            "#20993A",
-                            "#D2D4D3",
-                        ],
-                        "hoverBackgroundColor": [
-                            "#1B7F31",
-                            "#787A79",
-                        ]
-                    }]
-                }
+#     # print remaining harvest, harvest
+#     data_dict = {
+#                 "labels": [
+#                     "Remaining Harvest",
+#                     "Harvested",
+#                 ],
+#                 "datasets": [
+#                     {
+#                         "data": [remaining_harvest, harvested],
+#                         "backgroundColor": [
+#                             "#20993A",
+#                             "#D2D4D3",
+#                         ],
+#                         "hoverBackgroundColor": [
+#                             "#1B7F31",
+#                             "#787A79",
+#                         ]
+#                     }]
+#                 }
 
-    return jsonify(data_dict)
+#     return jsonify(data_dict)
 
-# Donut chart number 3 profile page
+# # Donut chart number 3 profile page
 
-def find_harvest_three(user):
-    """Will find the harvests,
-      will return the total harvest,
-      and will find the remaining harvest"""
+# def find_harvest_three(user):
+#     """Will find the harvests,
+#       will return the total harvest,
+#       and will find the remaining harvest"""
 
 
-    remaining_harvest = .25
-    harvested = .75
+#     remaining_harvest = .25
+#     harvested = .75
 
-    return remaining_harvest, harvested
+#     return remaining_harvest, harvested
 
-@app.route('/giv_donut_3.json')
-def giv_donut_3():
-    """Return data about Circlet."""
+# @app.route('/giv_donut_3.json')
+# def giv_donut_3():
+#     """Return data about Circlet."""
 
-    # print remaining harvest, harvest
-    data_dict = {
-                "labels": [
-                    "Remaining Harvest",
-                    "Harvested",
-                ],
-                "datasets": [
-                    {
-                        "data": [remaining_harvest, harvested],
-                        "backgroundColor": [
-                            "#20993A",
-                            "#D2D4D3",
-                        ],
-                        "hoverBackgroundColor": [
-                            "#1B7F31",
-                            "#787A79",
-                        ]
-                    }]
-                }
+#     # print remaining harvest, harvest
+#     data_dict = {
+#                 "labels": [
+#                     "Remaining Harvest",
+#                     "Harvested",
+#                 ],
+#                 "datasets": [
+#                     {
+#                         "data": [remaining_harvest, harvested],
+#                         "backgroundColor": [
+#                             "#20993A",
+#                             "#D2D4D3",
+#                         ],
+#                         "hoverBackgroundColor": [
+#                             "#1B7F31",
+#                             "#787A79",
+#                         ]
+#                     }]
+#                 }
 
-    return jsonify(data_dict)
+#     return jsonify(data_dict)
 
 
 @app.route('/circlet/<id>')
