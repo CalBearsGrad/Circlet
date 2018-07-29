@@ -41,7 +41,7 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """ Homepage """
-    session['user_id'] = "1"
+    # session['user_id'] = "1"
     return render_template('homepage.html')
 
 
@@ -95,7 +95,7 @@ def verify_registration():
         print "New User"
         user = User(first_name=first_name, last_name=last_name, email=email, password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=new_cc.credit_card_id)
         print user
-        
+
         db.session.add(user)
         db.session.commit()
 
@@ -158,6 +158,48 @@ def log_in():
     """Allows user to log in
     """
     return render_template('log_in.html')
+
+@app.route('/log_in', methods=["POST"])
+def log_me_in():
+
+    login_email = request.form.get("email")
+    login_password = request.form.get("password")
+
+    print login_email, login_password
+
+    # Get user object
+    existing_user = User.query.filter(User.email == login_email).all()
+
+    # In DB?
+    if len(existing_user) == 1:
+        print "Email in DB"
+        existing_password = existing_user[0].password
+
+        # Correct password (hashed)?
+        if bcrypt.hashpw(login_password.encode('utf-8'), existing_password.encode('utf-8')) == existing_password:
+            if 'login' in session:
+                flash("You are already logged in!")
+                return redirect('/')
+            else:
+                #Add to session
+                session['user_id'] = existing_user[0].user_id
+                flash("Hi {}, you are now logged in!".format(existing_user[0].first_name))
+                return redirect('/')
+        else:
+            flash("Incorrect password. Please try again.")
+            return redirect('/log_in')
+
+    # Not in DB
+    elif len(existing_user) == 0:
+        print "Email not in DB"
+        flash("That email couldn't be found. Please try again.")
+        return redirect('/log_in')
+
+    else:
+        print "MAJOR PROBLEM!"
+        flash("You have found a website loophole... Please try again later.")
+        return redirect("/")
+
 
 @app.route('/settings/<id>')
 def setting(id):
