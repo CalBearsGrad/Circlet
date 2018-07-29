@@ -143,11 +143,29 @@ def profile(id):
 
     return render_template('profile.html', user=get_user(id), first_name=first_name(id))
 
-@app.route('/log_in')
+@app.route("/log_in", methods=["POST", "GET"])
 def log_in():
-    """Allows user to log in
-    """
-    return render_template('log_in.html')
+    """allow user to log_in"""
+
+    if "email" in session:
+        email = session["email"]
+        password = session["password"]
+
+    else:
+        email = ""
+        password = ""
+        
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        session["email"] = email
+        password = request.form.get("password")
+        session["password"] = password
+
+
+        return redirect("/profile/<id>")
+
+    return render_template("log_in.html", email=email, password=password)
 
 @app.route('/settings/<id>')
 def setting(id):
