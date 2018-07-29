@@ -48,11 +48,18 @@ def register():
 def profile(id):
     return render_template('profile.html', user=get_user(id))
 
+@app.route('/circlet/<id>')
+def circlet(id):
+    return render_template('circlet.html', circlet=get_circlet(id))
+
+def get_circlet(id):
+    return id
+
 def create_user(email, password):
     return "1"
 
 def get_user(id):
-    return None
+    return id
 
 @app.route('/sendemail')
 def send():
