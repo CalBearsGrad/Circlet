@@ -12,7 +12,7 @@ def sample_user():
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     users = [
         User(first_name="Madeline", last_name="Sanchez", email="madeline@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=1),
-        User(first_name="Al", last_name="A", email="a@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=2),
+        User(first_name="Allison", last_name="Kim", email="a@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=2),
         User(first_name="Bo", last_name="B", email="b@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=3),
         User(first_name="Cy", last_name="C", email="c@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=4),
         User(first_name="De", last_name="D", email="d@example.com", password=hashed_pw, created_at='2018-07-28', reliability=10, ranking=10, credit_card_id=5),
